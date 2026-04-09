@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Joining Roblox...</title>
+    <script>
+        function joinGame() {
+            const params = new URLSearchParams(window.location.search);
+            const placeId = params.get("placeId");
+            const gameInstanceId = params.get("gameInstanceId");
+
+            if (!placeId) {
+                document.body.innerHTML = "Missing placeId!";
+                return;
+            }
+
+            let url = `roblox://placeId=${placeId}`;
+
+            if (gameInstanceId) {
+                url += `&gameInstanceId=${gameInstanceId}`;
+            }
+
+            window.location.href = url;
+
+            // fallback kalau gagal
+            setTimeout(() => {
+                window.location.href = `https://www.roblox.com/games/${placeId}`;
+            }, 3000);
+        }
+
+        window.onload = joinGame;
+    </script>
+</head>
+<body>
+    <h2>Joining Roblox...</h2>
+</body>
+</html>
