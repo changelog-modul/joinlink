@@ -4,15 +4,30 @@ let latestJob = {
     updatedAt: 0
 };
 
-export default function handler(req, res) {
+export default async function handler(req, res) {
     if (req.method === "POST") {
+        let body = req.body;
+
+        // 🔥 FIX kalau body kosong
+        if (!body || typeof body === "string") {
+            try {
+                body = JSON.parse(body);
+            } catch (e) {
+                body = {};
+            }
+        }
+
+        if (!body.jobId) {
+            return res.status(400).json({ error: "No jobId" });
+        }
+
         latestJob = {
-            jobId: req.body.jobId,
-            placeId: req.body.placeId,
+            jobId: body.jobId,
+            placeId: body.placeId,
             updatedAt: Date.now()
         };
 
-        return res.status(200).json({ status: "updated" });
+        return res.status(200).json({ status: "updated", jobId: body.jobId });
     }
 
     res.status(405).end();
