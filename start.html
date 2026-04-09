@@ -1,33 +1,38 @@
-<script>
-let lastJobId = "";
-let joining = false;
-
-async function joinLoop() {
-    const params = new URLSearchParams(window.location.search);
-    const placeId = params.get("placeId");
-
-    if (!placeId) {
-        document.body.innerHTML = "Missing placeId!";
-        return;
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Joining...</title>
+    <script>
+    async function getJobId() {
+        try {
+            const res = await fetch("/api/job"); // ambil dari API kamu
+            const data = await res.json();
+            return data.jobId;
+        } catch (e) {
+            return null;
+        }
     }
 
-    try {
-        const res = await fetch("/api/job");
-        const data = await res.json();
+    async function join() {
+        const params = new URLSearchParams(window.location.search);
+        const placeId = params.get("placeId");
 
-        if (data.jobId && data.jobId !== lastJobId && !joining) {
-            lastJobId = data.jobId;
-            joining = true;
+        let jobId = await getJobId();
 
-            let url = `roblox://placeId=${placeId}&gameInstanceId=${data.jobId}`;
-            window.open(url, "_self");
+        if (!jobId) {
+            document.body.innerHTML = "Waiting for server...";
+            setTimeout(join, 2000);
             return;
         }
 
-    } catch (e) {}
+        const url = `roblox://placeId=${placeId}&gameInstanceId=${jobId}`;
+        window.location.href = url;
+    }
 
-    setTimeout(joinLoop, 2000);
-}
-
-joinLoop();
-</script>
+    join();
+    </script>
+</head>
+<body>
+Joining...
+</body>
+</html>
