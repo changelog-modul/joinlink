@@ -1,5 +1,6 @@
 <script>
 let lastJobId = "";
+let joining = false;
 
 async function joinLoop() {
     const params = new URLSearchParams(window.location.search);
@@ -14,17 +15,18 @@ async function joinLoop() {
         const res = await fetch("/api/job");
         const data = await res.json();
 
-        if (data.jobId && data.jobId !== lastJobId) {
+        if (data.jobId && data.jobId !== lastJobId && !joining) {
             lastJobId = data.jobId;
+            joining = true;
 
             let url = `roblox://placeId=${placeId}&gameInstanceId=${data.jobId}`;
-            window.location.href = url;
+            window.open(url, "_self");
+            return;
         }
 
     } catch (e) {}
 
-    // 🔁 cek ulang terus
-    setTimeout(joinLoop, 3000);
+    setTimeout(joinLoop, 2000);
 }
 
 joinLoop();
