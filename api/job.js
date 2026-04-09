@@ -1,17 +1,10 @@
-import { latestJob } from "./update";
+let currentJobId = "";
 
 export default function handler(req, res) {
-    if (!latestJob.jobId) {
-        return res.status(200).json({ jobId: null });
+    if (req.method === "POST") {
+        currentJobId = req.body.jobId;
+        return res.json({ success: true });
     }
 
-    // optional: expire setelah 30 detik
-    if (Date.now() - latestJob.updatedAt > 30000) {
-        return res.status(200).json({ jobId: null });
-    }
-
-    res.status(200).json({
-        jobId: latestJob.jobId,
-        placeId: latestJob.placeId
-    });
+    res.json({ jobId: currentJobId });
 }
