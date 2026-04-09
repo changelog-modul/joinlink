@@ -1,36 +1,31 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Joining Roblox...</title>
-    <script>
-        function joinGame() {
-            const params = new URLSearchParams(window.location.search);
-            const placeId = params.get("placeId");
-            const gameInstanceId = params.get("gameInstanceId");
+<script>
+let lastJobId = "";
 
-            if (!placeId) {
-                document.body.innerHTML = "Missing placeId!";
-                return;
-            }
+async function joinLoop() {
+    const params = new URLSearchParams(window.location.search);
+    const placeId = params.get("placeId");
 
-            let url = `roblox://placeId=${placeId}`;
+    if (!placeId) {
+        document.body.innerHTML = "Missing placeId!";
+        return;
+    }
 
-            if (gameInstanceId) {
-                url += `&gameInstanceId=${gameInstanceId}`;
-            }
+    try {
+        const res = await fetch("/api/job");
+        const data = await res.json();
 
+        if (data.jobId && data.jobId !== lastJobId) {
+            lastJobId = data.jobId;
+
+            let url = `roblox://placeId=${placeId}&gameInstanceId=${data.jobId}`;
             window.location.href = url;
-
-            // fallback kalau gagal
-            setTimeout(() => {
-                window.location.href = `https://www.roblox.com/games/${placeId}`;
-            }, 3000);
         }
 
-        window.onload = joinGame;
-    </script>
-</head>
-<body>
-    <h2>Joining Roblox...</h2>
-</body>
-</html>
+    } catch (e) {}
+
+    // 🔁 cek ulang terus
+    setTimeout(joinLoop, 3000);
+}
+
+joinLoop();
+</script>
