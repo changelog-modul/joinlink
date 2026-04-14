@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Join Link Generator</title>
+</head>
+<body style="font-family: Arial; text-align:center; margin-top:50px;">
+
+    <h2>Roblox Join Link Generator</h2>
+
+    <input id="placeId" placeholder="PlaceId" />
+    <br><br>
+    <input id="jobId" placeholder="JobId" />
+    <br><br>
+
+    <button onclick="generate()">Generate</button>
+
+    <p id="result"></p>
+
+    <script>
+        function generate() {
+            const placeId = document.getElementById("placeId").value;
+            const jobId = document.getElementById("jobId").value;
+
+            if (!placeId || !jobId) {
+                document.getElementById("result").innerText = "Missing data";
+                return;
+            }
+
+            const link = `https://www.roblox.com/games/${placeId}?jobId=${jobId}`;
+
+            document.getElementById("result").innerHTML =
+                `<a href="${link}" target="_blank">${link}</a>`;
+        }
+    </script>
+
+</body>
+</html>
